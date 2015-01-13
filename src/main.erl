@@ -10,7 +10,25 @@
 -author("yuchen").
 
 %% API
--export([print_helloworld/0]).
+-export([evaluate/1]).
 
-print_helloworld() ->
-  io:format("Hello World ~n").
+evaluate(RPN) ->
+  evaluate(RPN, []).
+evaluate([], [Output|_]) ->
+  Output;
+evaluate(RPN, Stack) ->
+  [First|Retail] = RPN,
+  case First of
+    {number, Number} ->
+      evaluate(Retail, stack:push(Number, Stack));
+    {operator, "+"} ->
+      evaluate(Retail, stack:add(Stack));
+    {operator, "-"} ->
+      evaluate(Retail, stack:sub(Stack));
+    {operator, "*"} ->
+      evaluate(Retail, stack:mul(Stack));
+    {operator, "/"} ->
+      evaluate(Retail, stack:division(Stack));
+    {operator, "~"} ->
+      evaluate(Retail, stack:toNegative(Stack))
+  end.
