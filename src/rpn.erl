@@ -31,8 +31,8 @@ parse({Resource, Stack, Output}) ->
         C ->
           addOperator(T, Stack, Output, {operator, Else});
         true ->
-          {Number, Retail} = string:to_integer(Resource),
-          parse({Retail, Stack, lists:append(Output, [{number, Number}])})
+          {Number, Remain} = string:to_integer(Resource),
+          parse({Remain, Stack, lists:append(Output, [{number, Number}])})
       end
   end;
 parse(Resource) ->
@@ -62,7 +62,7 @@ precedence(X) ->
 addOperator(Resource, [], Output, Operator) ->
   parse({Resource, [Operator], Output});
 addOperator(Resource, Stack, Output, Operator) ->
-  [Top|Retail] = Stack,
+  [Top|Remain] = Stack,
   C = precedence(Operator) > precedence(Top),
   if
     Top == {bracket, left} ->
@@ -70,16 +70,16 @@ addOperator(Resource, Stack, Output, Operator) ->
     C ->
       parse({Resource, lists:append([Operator], Stack), Output});
     true ->
-      addOperator(Resource, Retail, lists:append(Output, [Top]), Operator)
+      addOperator(Resource, Remain, lists:append(Output, [Top]), Operator)
   end.
 
 matchBrackets(Resource, Stack, Output) ->
-  [Top|Retail] = Stack,
+  [Top|Remain] = Stack,
   case Top of
     {bracket, left} ->
-      parse({Resource, Retail, Output});
+      parse({Resource, Remain, Output});
     Else ->
-      matchBrackets(Resource, Retail, lists:append(Output, [Else]))
+      matchBrackets(Resource, Remain, lists:append(Output, [Else]))
   end.
 
 

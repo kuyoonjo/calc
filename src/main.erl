@@ -10,25 +10,51 @@
 -author("yuchen").
 
 %% API
--export([evaluate/1]).
+-export([evaluate/1, compile/1, simulate/1]).
 
 evaluate(RPN) ->
-  evaluate(RPN, []).
-evaluate([], [Output|_]) ->
-  Output;
-evaluate(RPN, Stack) ->
-  [First|Retail] = RPN,
+  simulate(compile(RPN)).
+
+compile(RPN) ->
+  compile(RPN, []).
+compile([], Output) ->
+  lists:append(Output, [{return}]);
+compile(RPN, Output) ->
+  [First|Remain] = RPN,
   case First of
     {number, Number} ->
-      evaluate(Retail, stack:push(Number, Stack));
+      compile(Remain, lists:append(Output, [{push, {number, Number}}]));
     {operator, "+"} ->
-      evaluate(Retail, stack:add(Stack));
+      compile(Remain, lists:append(Output, [{addition}]));
     {operator, "-"} ->
-      evaluate(Retail, stack:sub(Stack));
+      compile(Remain, lists:append(Output, [{subtraction}]));
     {operator, "*"} ->
-      evaluate(Retail, stack:mul(Stack));
+      compile(Remain, lists:append(Output, [{multiplication}]));
     {operator, "/"} ->
-      evaluate(Retail, stack:division(Stack));
+      compile(Remain, lists:append(Output, [{division}]));
     {operator, "~"} ->
-      evaluate(Retail, stack:toNegative(Stack))
+      compile(Remain, lists:append(Output, [{negation}]))
   end.
+
+simulate(CODE) ->
+  simulate(CODE, []).
+simulate(CODE, Stack) ->
+  [First|Remain] = CODE,
+  case First of
+    {push, {number, Number}} ->
+      simulate(Remain, stack:push(Number, Stack));
+    {addition} ->
+      simulate(Remain, stack:addition(Stack));
+    {subtraction} ->
+      simulate(Remain, stack:subtraction(Stack));
+    {multiplication} ->
+      simulate(Remain, stack:multiplication(Stack));
+    {division} ->
+      simulate(Remain, stack:division(Stack));
+    {negation} ->
+      simulate(Remain, stack:negation(Stack));
+    {return} ->
+      [Output|_] = Stack,
+      Output
+  end.
+

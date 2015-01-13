@@ -10,22 +10,22 @@
 -author("yuchen").
 
 %% API
--export([push/2, pop/1, add/1, mul/1, sub/1, division/1, toNegative/1]).
+-export([push/2, pop/1, addition/1, multiplication/1, subtraction/1, division/1, negation/1]).
 
 push(X, Stack) ->
   lists:append([X], Stack).
 pop(Stack) ->
-  [First|Retail] = Stack,
-  {First, Retail}.
-add(Stack) ->
+  [First|Remain] = Stack,
+  {First, Remain}.
+addition(Stack) ->
   {N1, S1} = pop(Stack),
   {N2, S2} = pop(S1),
   push(N1 + N2, S2).
-mul(Stack) ->
+multiplication(Stack) ->
   {N1, S1} = pop(Stack),
   {N2, S2} = pop(S1),
   push(N1 * N2, S2).
-sub(Stack) ->
+subtraction(Stack) ->
   {N1, S1} = pop(Stack),
   {N2, S2} = pop(S1),
   push(N2 - N1, S2).
@@ -33,6 +33,6 @@ division(Stack) ->
   {N1, S1} = pop(Stack),
   {N2, S2} = pop(S1),
   push(N2 / N1, S2).
-toNegative(Stack) ->
+negation(Stack) ->
   {N, S} = pop(Stack),
   push(-N, S).
