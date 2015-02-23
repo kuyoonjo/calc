@@ -12,8 +12,8 @@
 %% API
 -export([evaluate/1, compile/1, simulate/1]).
 
-evaluate(EXP) ->
-  simulate(compile(rpn:parse(EXP))).
+evaluate(RPN) ->
+  simulate(compile(RPN)).
 
 compile(RPN) ->
   compile(RPN, []).
