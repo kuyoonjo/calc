@@ -13,7 +13,30 @@
 -export([evaluate/1, compile/1, simulate/1]).
 
 evaluate(RPN) ->
-  simulate(compile(RPN)).
+  evaluate(RPN, []).
+evaluate([], [Output]) ->
+  Output;
+evaluate(RPN, Stack) ->
+  [First|Remain] = RPN,
+  case First of
+    {number, Number} ->
+      evaluate(Remain, lists:append([Number], Stack));
+    {operator, "+"} ->
+      [Y, X|Tail] = Stack,
+      evaluate(Remain, lists:append([X + Y], Tail));
+    {operator, "-"} ->
+      [Y, X|Tail] = Stack,
+      evaluate(Remain, lists:append([X - Y], Tail));
+    {operator, "*"} ->
+      [Y, X|Tail] = Stack,
+      evaluate(Remain, lists:append([X * Y], Tail));
+    {operator, "/"} ->
+      [Y, X|Tail] = Stack,
+      evaluate(Remain, lists:append([X / Y], Tail));
+    {operator, "~"} ->
+      [X|Tail] = Stack,
+      evaluate(Remain, lists:append([-X], Tail))
+  end.
 
 compile(RPN) ->
   compile(RPN, []).
